@@ -9,6 +9,7 @@ use Services\OrderService;
 use Services\OrderQuotationService;
 use Services\ListOrderService;
 use Services\OrderInvoicesService;
+use Controllers\OiMarkSendEmailController;
 
 class OrdersController
 {
@@ -177,6 +178,8 @@ class OrdersController
         }
 
         $labelResult = (new OrderService())->createLabel($postId);
+
+        (new OiMarkSendEmailController())->sendEmail($postId);
 
         return wp_send_json([
             'success' => true,
