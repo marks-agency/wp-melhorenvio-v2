@@ -68,6 +68,10 @@
   color: #fff;
   font-weight: 600;
 }
+
+.remove-element{
+display:none;
+}
 </style>
 
 <template>
@@ -543,7 +547,7 @@
       <hr />
     </div>
 
-    <div class="wpme_config">
+    <div class="wpme_config remove-element">
       <h2>Calculadora</h2>
       <p>
         Ao habilitar essa opção, será exibida a calculadora de fretes com
@@ -587,7 +591,7 @@
     </div>
     <hr />
 
-    <div class="wpme_config" style="width: 50%">
+    <div class="wpme_config remove-element" style="width: 50%">
       <h2>Diretório dos plugins</h2>
       <p>
         Em algumas instâncias do wordpress, o caminho do diretório de plugins
