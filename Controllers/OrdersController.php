@@ -9,7 +9,7 @@ use Services\OrderService;
 use Services\OrderQuotationService;
 use Services\ListOrderService;
 use Services\OrderInvoicesService;
-use Controllers\OiMarkSendEmailController;
+//use Controllers\OiMarkSendEmailController;
 
 class OrdersController
 {
@@ -179,7 +179,8 @@ class OrdersController
 
         $labelResult = (new OrderService())->createLabel($postId);
 
-        (new OiMarkSendEmailController())->sendEmail($postId);
+        //(new OiMarkSendEmailController())->sendEmail($postId);
+        //do_action('oi_mark_melhor_envio_send_email_by', $postId);
 
         return wp_send_json([
             'success' => true,
