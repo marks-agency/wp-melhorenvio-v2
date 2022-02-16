@@ -9,6 +9,8 @@ use Services\OrderService;
 use Services\OrderQuotationService;
 use Services\ListOrderService;
 use Services\OrderInvoicesService;
+use Services\TrackingService;
+
 //use Controllers\OiMarkSendEmailController;
 
 class OrdersController
@@ -180,7 +182,10 @@ class OrdersController
         $labelResult = (new OrderService())->createLabel($postId);
 
         //(new OiMarkSendEmailController())->sendEmail($postId);
-        //do_action('oi_mark_melhor_envio_send_email_by', $postId);
+
+        $oi_mark_rastreio_cod_melhor_envio = (new TrackingService())->getTrackingOrder($postId);
+
+        do_action('oi_mark_melhor_envio_send_email_by', $postId,$oi_mark_rastreio_cod_melhor_envio);
 
         return wp_send_json([
             'success' => true,
