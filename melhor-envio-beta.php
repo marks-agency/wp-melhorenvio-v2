@@ -274,7 +274,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
-        
+
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
             require_once $filename;
