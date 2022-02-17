@@ -190,7 +190,8 @@ class OrdersController
         return wp_send_json([
             'success' => true,
             'message' => (array) 'Pedido gerado com sucesso',
-            'data' => $labelResult
+            'data' => $labelResult,
+            'rastreio'=>$oi_mark_rastreio_cod_melhor_envio
         ], 200);
     }
 
