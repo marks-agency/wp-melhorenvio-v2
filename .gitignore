@@ -22,8 +22,6 @@ assets/css/admin.css.map
 assets/js/admin.js
 
 
-node_modules/
-package-lock.json
-yarn.lock
+
 
 .idea/
