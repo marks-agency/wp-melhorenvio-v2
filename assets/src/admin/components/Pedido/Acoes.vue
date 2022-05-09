@@ -67,6 +67,8 @@
         />
       </svg>
     </a>
+    </br>
+    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do remetente e/ou destinatário é obrigatório</p>
 
     <a
       v-if="buttonBuy(item)"
@@ -284,6 +286,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
   data: () => {
     return {};
@@ -348,39 +351,28 @@ export default {
         });
     },
     buttonCart(item) {
+      if (this.needShowValidationDocument(item)) {
+        return false;
+      }
+
       if (typeof item.quotation.choose_method === "undefined") {
         return false;
       }
       if (
         item.status == statusMelhorEnvio.STATUS_PENDING ||
-        item.status == statusMelhorEnvio.STATUS_RELEASED
+        item.status == statusMelhorEnvio.STATUS_RELEASED ||
+        item.status == statusMelhorEnvio.STATUS_DELIVERED
       ) {
         return false;
       }
-      if (
-        item.quotation.choose_method == 1 ||
-        item.quotation.choose_method == 2 ||
-        (item.quotation.choose_method == 17 &&
-          (item.status == null ||
-            item.status == statusMelhorEnvio.STATUS_CANCELED))
-      ) {
-        return true;
-      }
-      if (
-        item.quotation.choose_method >= 3 &&
-        (item.status == null ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED)
-      ) {
-        if (item.non_commercial) {
-          return true;
-        }
-        if (item.invoice.number != null && item.invoice.key != null) {
-          return true;
-        }
-      }
+      return true;
     },
     buttonBuy(item) {
       if (!item.service_id) {
+        return false;
+      }
+
+      if (!item.status) {
         return false;
       }
 
@@ -388,7 +380,8 @@ export default {
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
           item.status == statusMelhorEnvio.STATUS_RELEASED ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED
+          item.status == statusMelhorEnvio.STATUS_CANCELED ||
+          item.status == statusMelhorEnvio.STATUS_DELIVERED
         )
       ) {
         return true;
@@ -405,6 +398,12 @@ export default {
         return true;
       }
       return false;
+    },
+    needShowValidationDocument(item) {
+      return (
+        !item.to.document &&
+        !item.to.company_document
+      );
     },
   },
 };

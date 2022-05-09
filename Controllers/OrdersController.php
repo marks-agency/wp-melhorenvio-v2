@@ -15,6 +15,8 @@ use Services\TrackingService;
 
 class OrdersController
 {
+    const NOT_FOUND_ORDER_ID = 'Informar o ID do pedido';
+
     /**
      * Function to search for orders in the order panel
      *
@@ -90,7 +92,7 @@ class OrdersController
         if (empty($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'errors' => ['Informar o ID do pedido']
+                'errors' => [self::NOT_FOUND_ORDER_ID]
             ], 412);
         }
 
@@ -206,7 +208,7 @@ class OrdersController
         if (!isset($_GET['order_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Informar o ID do pedido'
+                'message' => self::NOT_FOUND_ORDER_ID
             ], 400);
         }
 
@@ -234,7 +236,7 @@ class OrdersController
         if (!isset($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => ['Informar o ID do pedido']
+                'message' => [self::NOT_FOUND_ORDER_ID]
             ], 400);
         }
 

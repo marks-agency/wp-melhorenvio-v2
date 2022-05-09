@@ -123,7 +123,7 @@ display:none;
                         setOrigin(option.id)
                     "
                   />
-                  <h2>{{ option.name }}</h2>
+                  <h2>{{ option.address.label }}</h2>
                 </div>
                 <div class="wpme_address-body">
                   <ul>

@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Models\ShippingService;
 use Helpers\TranslateStatusHelper;
 use Helpers\ProductVirtualHelper;
 
@@ -78,7 +79,9 @@ class ListOrderService
                     $statusMelhorEnvio[$postId]['status']
                 ),
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
-                'service_id' => $statusMelhorEnvio[$postId]['service_id'],
+                'service_id' =>  (!empty($statusMelhorEnvio[$postId]['service_id']))
+                    ? $statusMelhorEnvio[$postId]['service_id']
+                    : ShippingService::CORREIOS_SEDEX,
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
                 'non_commercial' => is_null($invoice['number']) || is_null($invoice['key']),
                 'invoice'        => $invoice,
@@ -116,11 +119,11 @@ class ListOrderService
             $args['post_status'] = 'publish';
         }
 
-        if (isset($$status) && $$status != 'all') {
+        if (isset($status) && $status != 'all') {
             $args['meta_query'] = [
                 [
                     'key' => 'melhorenvio_status_v2',
-                    'value' => sprintf(':"%s";', $$status),
+                    'value' => sprintf(':"%s";', $status),
                     'compare' => 'LIKE'
                 ]
             ];
