@@ -57,25 +57,26 @@
     <template v-else>
       <p>
         <b>
-          <span v-if="item.status == status.STATUS_GENERATED"
+          <span v-if="item.status === status.STATUS_GENERATED"
             >Pronta para imprimir</span
           >
-          <span v-if="item.status == status.STATUS_PAID"
+          <span v-if="item.status === status.STATUS_PAID"
             >Pronta para imprimir</span
           >
-          <span v-if="item.status == status.STATUS_RELEASED"
+          <span v-if="item.status === status.STATUS_RELEASED"
             >Pronta para imprimir</span
           >
-          <span v-if="item.status == status.STATUS_POSTED"
+          <span v-if="item.status === status.STATUS_POSTED"
             >Etiqueta postada</span
           >
+          <span v-if="item.status === status.STATUS_DELIVERED">Entregue</span>
         </b>
       </p>
     </template>
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
 import shippingServices from "../../utils/shipping-services";
 export default {
@@ -94,6 +95,5 @@ export default {
   methods: {
     ...mapActions("orders", ["insertInvoice"]),
   },
-  mounted() {},
 };
 </script>

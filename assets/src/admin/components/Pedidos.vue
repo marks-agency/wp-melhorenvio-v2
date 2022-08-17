@@ -49,9 +49,7 @@
 <template>
   <div class="app-pedidos">
     <div class="boxBanner">
-      <img
-        src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png"
-      />
+      <img src="@images/banner-admin.jpeg" />
     </div>
     <template>
       <div>
@@ -168,15 +166,7 @@
                   <div class="scrollBox">
                     <p v-for="product in item.products">
                       {{ product.quantity }}x
-                      <a
-                        target="_blank"
-                        v-bind:href="
-                          '/wp-admin/post.php?post=' +
-                          product.id +
-                          '&action=edit'
-                        "
-                        >{{ product.name }}</a
-                      >
+                      <ProductLink :id="product.id" :name="product.name" />
                     </p>
                   </div>
                 </template>
@@ -188,9 +178,10 @@
                   </p>
                   <p v-if="item.tracking != null">
                     Rastreio:
-                    <a :href="item.link_tracking" target="_blank">{{
-                      item.tracking
-                    }}</a>
+                    <ProductLink
+                      :definedLink="item.link_tracking"
+                      :name="item.tracking"
+                    />
                   </p>
                 </template>
               </li>
@@ -316,7 +307,9 @@ import Destino from "./Pedido/Destino.vue";
 import Cotacao from "./Pedido/Cotacao.vue";
 import Documentos from "./Pedido/Documentos.vue";
 import Acoes from "./Pedido/Acoes.vue";
+import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
+import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
 
 export default {
   name: "Pedidos",
@@ -347,6 +340,7 @@ export default {
     Documentos,
     Acoes,
     Informacoes,
+    ProductLink,
   },
   computed: {
     ...mapGetters("orders", {
@@ -362,8 +356,7 @@ export default {
   methods: {
     ...mapActions("orders", [
       "retrieveMany",
-      "loadMore",
-      ,
+      "loadMore",      
       "closeModal",
       "getStatusWooCommerce",
       "printMultiples",
@@ -379,13 +372,17 @@ export default {
       this.toggleInfo = this.toggleInfo != id ? id : null;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then((response) => {
-        if (!response.data.exists_token) {
-          this.$router.push("Token");
-        }
+      this.$http
+        .get(
+          verifyToken()
+        )
+        .then((response) => {
+          if (!response.data.exists_token) {
+            this.$router.push("Token");
+          }
 
-        this.validateToken();
-      });
+          this.validateToken();
+        });
     },
     selectAll: function () {
       if (!this.$refs.selectAllBox.checked) {
@@ -516,14 +513,16 @@ export default {
       });
     },
     getMe() {
-      this.$http.get(`${ajaxurl}?action=me`).then((response) => {
-        if (response.data.id) {
-          this.name = response.data.firstname + " " + response.data.lastname;
-          this.environment = response.data.environment;
-          this.limit = response.data.limits.shipments;
-          this.limitEnabled = response.data.limits.shipments_available;
-        }
-      });
+      this.$http
+        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_users}`)
+        .then((response) => {
+          if (response.data.id) {
+            this.name = response.data.firstname + " " + response.data.lastname;
+            this.environment = response.data.environment;
+            this.limit = response.data.limits.shipments;
+            this.limitEnabled = response.data.limits.shipments_available;
+          }
+        });
     },
     close() {
       this.show_modal2 = false;
@@ -531,36 +530,22 @@ export default {
       this.closeModal();
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
-        if (response.data.token) {
-          var token = response.data.token;
-
-          // JWT Token Decode
-          var base64Url = token.split(".")[1];
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          var tokenDecoded = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map(function (c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-              })
-              .join("")
-          );
-
-          var tokenFinal = JSON.parse(tokenDecoded);
-          var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-          var currentTime = new Date();
-
-          if (dateExp < currentTime) {
-            this.error_message =
-              "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+      this.$http
+        .get(
+          getToken()
+        )
+        .then((response) => {
+          if (response.data.token) {
+            if (isDateTokenExpired(response.data.token)) {
+              this.error_message =
+                "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+            } else {
+              this.error_message = "";
+            }
           } else {
-            this.error_message = "";
+            this.$router.push("Token");
           }
-        } else {
-          this.$router.push("Token");
-        }
-      });
+        });
     },
   },
   watch: {

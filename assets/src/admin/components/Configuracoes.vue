@@ -1,4 +1,4 @@
-<style>
+<style lang="css">
 .boxBanner {
   float: left;
   width: 100%;
@@ -69,16 +69,16 @@
   font-weight: 600;
 }
 
-.remove-element{
+/*.remove-element{
 display:none;
-}
+}*/
 </style>
 
 <template>
   <div>
     <div class="boxBanner">
       <img
-        src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png"
+        src="@images/banner-admin.jpeg"
       />
     </div>
 
@@ -448,7 +448,7 @@ display:none;
       <hr />
     </div>
 
-    <div class="wpme_config remove-element">
+    <div class="wpme_config ">
       <h2>Calculadora</h2>
       <p>
         Ao habilitar essa opção, será exibida a calculadora de fretes com
@@ -468,11 +468,11 @@ display:none;
                 v-model="where_calculator"
               >
                 <option
-                  v-for="option in where_calculator_collect"
-                  :value="option.id"
-                  :key="option.id"
+                  v-for="option in keysWhereCalculatorCollect"
+                  :value="option"
+                  :key="option"
                 >
-                  <strong>{{ option.name }}</strong>
+                  <strong>{{ where_calculator_collect[option] }}</strong>
                 </option>
               </select>
             </label>
@@ -492,7 +492,7 @@ display:none;
     </div>
     <hr />
 
-    <div class="wpme_config remove-element" style="width: 50%">
+    <div class="wpme_config " style="width: 50%">
       <h2>Diretório dos plugins</h2>
       <p>
         Em algumas instâncias do wordpress, o caminho do diretório de plugins
@@ -610,6 +610,13 @@ display:none;
 import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
 import { TheMask } from "vue-the-mask";
+import { where_calculator_collect } from "admin/utils/where-calculator_collect";
+import {
+  verifyToken,
+  getToken,
+  isDateTokenExpired,
+} from "admin/utils/token-utils";
+import deleteSession from "admin/utils/delete-session";
 
 export default {
   name: "Configuracoes",
@@ -648,56 +655,7 @@ export default {
         masked: false,
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
-      where_calculator_collect: [
-        {
-          id: "none",
-          name: "Não exibir calculadora",
-        },
-        {
-          id: "woocommerce_before_single_product",
-          name: "Antes do titulo do produto (Depende do tema do projeto)",
-        },
-        {
-          id: "woocommerce_after_single_product",
-          name: "Depois do titulo do produto",
-        },
-        {
-          id: "woocommerce_single_product_summary",
-          name: "Antes da descrição do produto",
-        },
-        {
-          id: "woocommerce_before_add_to_cart_form",
-          name: "Antes do fórmulario de comprar",
-        },
-        {
-          id: "woocommerce_before_variations_form",
-          name: "Antes das opçoes do produto",
-        },
-        {
-          id: "woocommerce_before_add_to_cart_button",
-          name: "Antes do botão de comprar",
-        },
-        {
-          id: "woocommerce_before_single_variation",
-          name: "Antes do campo de variações",
-        },
-        {
-          id: "woocommerce_single_variation",
-          name: "Antes das variações",
-        },
-        {
-          id: "woocommerce_after_add_to_cart_form",
-          name: "Depois do botão de comprar",
-        },
-        {
-          id: "woocommerce_product_meta_start",
-          name: "Antes das informações do produto",
-        },
-        {
-          id: "woocommerce_share",
-          name: "Depois dos botões de compartilhamento",
-        },
-      ],
+      where_calculator_collect,
     };
   },
   computed: {
@@ -723,6 +681,9 @@ export default {
       token_environment: "getEnvironment",
       configs: "getConfigs",
     }),
+    keysWhereCalculatorCollect() {
+      return Object.keys(this.where_calculator_collect);
+    },
   },
   methods: {
     ...mapActions("configuration", [
@@ -799,15 +760,17 @@ export default {
         });
       }
     },
+    createAjaxUrl(agencyId, data) {
+      const { city, state } = data;
+      return `${ajaxurl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
+    },
     showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
       var responseAgencies = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}`
-          )
+          .post(this.createAjaxUrl(2, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgencies = response.data;
@@ -832,11 +795,9 @@ export default {
       this.setLoader(true);
       this.agency_azul = "";
       var responseAgenciesAzul = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}`
-          )
+          .post(this.createAjaxUrl(9, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesAzul = response.data;
@@ -860,11 +821,9 @@ export default {
       this.setLoader(true);
       this.agency_latam = "";
       var responseAgenciesLatam = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}`
-          )
+          .post(this.createAjaxUrl(6, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesLatam = response.data;
@@ -888,28 +847,18 @@ export default {
       this.show_modal = false;
     },
     clearSession() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(`${ajaxurl}?action=delete_melhor_envio_session`)
-          .then((response) => {
-            resolve(true);
-          });
+      return new Promise((resolve, _reject) => {
+        this.$http.get(deleteSession()).then((_response) => {
+          resolve(true);
+        });
       });
-    },
-    formatNumber(value) {
-      let val = (value / 1).toFixed(2).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    formatPercent(value) {
-      let val = value / 1;
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     showTimeWithDay(value) {
       let val = value == 1 ? value + " dia" : value + " dias";
       return val;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then((response) => {
+      this.$http.get(verifyToken()).then((response) => {
         if (!response.data.exists_token) {
           this.$router.push("Token");
         }
@@ -918,27 +867,9 @@ export default {
       });
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+      this.$http.get(getToken()).then((response) => {
         if (response.data.token) {
-          var token = response.data.token;
-
-          // JWT Token Decode
-          var base64Url = token.split(".")[1];
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          var tokenDecoded = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map(function (c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-              })
-              .join("")
-          );
-
-          var tokenFinal = JSON.parse(tokenDecoded);
-          var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-          var currentTime = new Date();
-
-          if (dateExp < currentTime) {
+          if (isDateTokenExpired(response.data.token)) {
             this.error_message =
               "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
           } else {

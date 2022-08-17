@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-class Session
-{
-    const ME_KEY = 'melhor_envio_session';
+class Session {
+
+	const ME_KEY = 'melhor_envio_session';
 }

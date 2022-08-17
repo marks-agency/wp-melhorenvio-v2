@@ -1,32 +1,32 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Services\ClearDataStored;
-use Helpers\SessionHelper;
-use Models\Session;
+use MelhorEnvio\Services\ClearDataStored;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
+use MelhorEnvio\Models\Session;
 
-class SessionsController
-{
-    /**
-     * Function to get information from the plugin session
-     *
-     * @return json
-     */
-    public function getSession()
-    {
-        SessionHelper::initIfNotExists();
-        
-        return wp_send_json($_SESSION[Session::ME_KEY], 200);
-    }
+class SessionsController {
 
-    /**
-     * Function to delete information from the plugin session
-     *
-     * @return json
-     */
-    public function deleteSession()
-    {
-        (new ClearDataStored())->clear();
-    }
+	/**
+	 * Function to get information from the plugin session
+	 *
+	 * @return json
+	 */
+	public function getSession() {
+		SessionHelper::initIfNotExists();
+
+		return wp_send_json( $_SESSION[ Session::ME_KEY ], 200 );
+	}
+
+	/**
+	 * Function to delete information from the plugin session
+	 *
+	 * @return json
+	 */
+	public function deleteSession() {
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
+		( new ClearDataStored() )->clear();
+	}
 }

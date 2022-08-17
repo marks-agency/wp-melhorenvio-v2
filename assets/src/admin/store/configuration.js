@@ -1,11 +1,13 @@
 'use strict'
 
 import Axios from 'axios'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
 
 const configuration = {
     namespaced: true,
     state: {
+        wp_nonce: null,
         origin: [],
         label: {
             name: "",
@@ -137,12 +139,13 @@ const configuration = {
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
         getOptionsCalculator: state => state.options_calculator,
-        getEnvironment: state => state.token_enviroment
+        getEnvironment: state => state.token_enviroment,
     },
     actions: {
         getConfigs: ({ commit }, data) => {
             let content = {
-                action: 'get_configuracoes'
+                action: 'get_configuracoes',
+                _wpnonce: wpApiSettingsMelhorEnvio.nonce_configs
             }
             return new Promise((resolve, reject) => {
                 Axios.get(`${ajaxurl}`, {
@@ -150,34 +153,34 @@ const configuration = {
                 }).then(function (response) {
                     if (response && response.status === 200) {
 
-                        if (response.data.origin && !_.isEmpty(response.data.origin)) {
+                        if (response.data.origin && !isEmpty(response.data.origin)) {
                             commit('setOrigin', response.data.origin);
                         }
 
-                        if (response.data.label && !_.isEmpty(response.data.label)) {
+                        if (response.data.label && !isEmpty(response.data.label)) {
                             commit('setLabel', response.data.label);
                         }
 
-                        if (response.data.agencies && !_.isNull(response.data.agencies)) {
+                        if (response.data.agencies && !isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
                             commit('setAllAgency', response.data.allAgencies);
                         }
 
-                        if (response.data.dimension_default && !_.isNull(response.data.dimension_default)) {
+                        if (response.data.dimension_default && !isNull(response.data.dimension_default)) {
                             commit('setDimension', response.data.dimension_default);
                         }
 
-                        if (response.data.agenciesAzul && !_.isNull(response.data.agenciesAzul)) {
+                        if (response.data.agenciesAzul && !isNull(response.data.agenciesAzul)) {
                             commit('setAgencyAzul', response.data.agenciesAzul);
                             commit('setAllAgencyAzul', response.data.allAgenciesAzul);
                         }
 
-                        if (response.data.agenciesLatam && !_.isNull(response.data.agenciesLatam)) {
+                        if (response.data.agenciesLatam && !isNull(response.data.agenciesLatam)) {
                             commit('setAgencyLatam', response.data.agenciesLatam);
                             commit('setAllAgencyLatam', response.data.allAgenciesLatam);
                         }
 
-                        if (response.data.stores && !_.isEmpty(response.data.stores)) {
+                        if (response.data.stores && !isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
                         }
                         commit('setAgencySelected', response.data.agencySelected)
@@ -235,16 +238,18 @@ const configuration = {
             })
         },
         saveAll: ({ commit }, data) => {
+
             return new Promise((resolve, reject) => {
                 const form = new FormData();
+
+                form.append('_wpnonce', wpApiSettingsMelhorEnvio.nonce_configs);   
+
                 if (data.origin) {
                     form.append('origin', data.origin)
                 }
                 if (data.label) {
                     const labels = Object.entries(data.label);
                     labels.forEach((item) => {
-                        console.log(item[0]);
-                        console.log(item[1]);
                         form.append(`label[${item[0]}]`, item[1]);
                     })
                 }

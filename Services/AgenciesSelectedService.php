@@ -1,36 +1,33 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Agency;
+use MelhorEnvio\Models\Agency;
 
-class AgenciesSelectedService
-{
-    protected $agencyModel;
+class AgenciesSelectedService {
 
-    public function __construct()
-    {
-        $this->agencyModel = new Agency();
-    }
+	protected $agencyModel;
 
-    /**
-     * @return array
-     */
-    public function get()
-    {
-        return $this->agencyModel->get();
-    }
+	public function __construct() {
+		$this->agencyModel = new Agency();
+	}
 
-    /**
-     * @param array $data
-     * @return bool
-     */
-    public function set($data)
-    {
-        if (empty($data)) {
-            return true;
-        }
-        
-        return $this->agencyModel->set($data);
-    }
+	/**
+	 * @return array
+	 */
+	public function get() {
+		return $this->agencyModel->get();
+	}
+
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function set( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->set( $data );
+	}
 }

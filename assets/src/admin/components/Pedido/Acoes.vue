@@ -1,12 +1,6 @@
 <template>
   <div class="container">
     <a
-      v-if="item.log"
-      :href="item.log"
-      class="action-button container__link"
-    ></a>
-
-    <a
       class="action-button container__link"
       v-if="buttonCart(item)"
       data-cy="input-add-cart"
@@ -284,19 +278,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
-import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
-  data: () => {
-    return {};
-  },
   props: {
     item: {
       type: Object,
     },
   },
-  mounted() {},
   methods: {
     ...mapActions("orders", [
       "addCart",
@@ -400,10 +389,7 @@ export default {
       return false;
     },
     needShowValidationDocument(item) {
-      return (
-        !item.to.document &&
-        !item.to.company_document
-      );
+      return !item.to.document && !item.to.company_document;
     },
   },
 };

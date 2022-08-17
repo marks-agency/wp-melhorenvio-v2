@@ -1,7 +1,7 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-class Store
-{
+class Store {
+
 }

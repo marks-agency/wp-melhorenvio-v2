@@ -6,16 +6,16 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.11.13
+Version: 2.11.29
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 2.11.13
-Requires PHP: 5.6
+Tested up to: 6.0
+Requires PHP: 7.2
 WC requires at least: 4.0
-WC tested up to: 5.7.2
+WC tested up to: 6.2
 Domain Path: /languages
 */
 
@@ -50,18 +50,19 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
 
-use Controllers\ShowCalculatorProductPage;
-use Models\CalculatorShow;
-use Models\Version;
-use Services\CheckHealthService;
-use Services\ClearDataStored;
-use Services\RolesService;
-use Services\RouterService;
-use Services\ShortCodeService;
-use Services\TrackingService;
-use Services\ListPluginsIncompatiblesService;
-use Services\SessionNoticeService;
-use Helpers\SessionHelper;
+use MelhorEnvio\Controllers\ShowCalculatorProductPage;
+use MelhorEnvio\Models\CalculatorShow;
+use MelhorEnvio\Models\Version;
+use MelhorEnvio\Services\CheckHealthService;
+use MelhorEnvio\Services\ClearDataStored;
+use MelhorEnvio\Services\RolesService;
+use MelhorEnvio\Services\RouterService;
+use MelhorEnvio\Services\ShortCodeService;
+use MelhorEnvio\Services\TrackingService;
+use MelhorEnvio\Services\ListPluginsIncompatiblesService;
+use MelhorEnvio\Services\SessionNoticeService;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
@@ -183,7 +184,7 @@ final class Base_Plugin
 
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if (!$pathPlugins) {
-            $pathPlugins = ABSPATH . 'wp-content/plugins';
+            $pathPlugins =  WP_PLUGIN_DIR;
         }
 
         if (is_admin()) {
@@ -192,20 +193,6 @@ final class Base_Plugin
 
             if (!empty($result['errors'])) {
                 return false;
-            }
-        }
-
-        if (empty($result['errorsPath'])) {
-            if (file_exists($pathPlugins . '/woocommerce/includes/class-woocommerce.php')) {
-                include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
-            }
-
-            if (file_exists($pathPlugins . '/woocommerce/woocommerce.php')) {
-                include_once $pathPlugins . '/woocommerce/woocommerce.php';
-            }
-
-            if (file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
-                include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
             }
         }
     }
@@ -250,10 +237,10 @@ final class Base_Plugin
                 require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
             }
         } catch (\Exception $e) {
-            add_action('admin_notices', function () {
-                echo sprintf('<div class="error">
+            add_action('admin_notices', function ($e) {
+                echo wp_kses(sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()), EscapeAllowedTags::allow_tags(["div", "p"]));
             });
             return false;
         }
@@ -287,6 +274,11 @@ final class Base_Plugin
             (new ShowCalculatorProductPage())->insertCalculator();
         }
 
+        add_filter( 'safe_style_css', function( $styles ) {
+            $styles[] = 'display';
+            return $styles;
+        } );        
+
         add_filter('woocommerce_shipping_methods', function ($methods) {
             $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
             $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
@@ -318,6 +310,23 @@ final class Base_Plugin
         if (is_admin()) {
             (new ListPluginsIncompatiblesService())->init();
         }
+
+        function load_var_nonce()
+        {
+            $wpApiSettings = json_encode( array( 
+                'nonce_configs' => wp_create_nonce( 'save_configurations' ),
+                'nonce_orders' => wp_create_nonce( 'orders' ),
+                'nonce_tokens' => wp_create_nonce( 'tokens' ),
+                'nonce_users' => wp_create_nonce( 'users' ),
+            ) );
+            
+            wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
+            wp_enqueue_script( 'wp-nonce-melhor-evio-wp-api' );
+            wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = ${wpApiSettings};" );
+        }
+
+        add_action( 'admin_enqueue_scripts', 'load_var_nonce');
+        add_action( 'wp_enqueue_scripts', 'load_var_nonce');
     }
 
     /**
@@ -348,9 +357,12 @@ final class Base_Plugin
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {
             add_action('admin_notices', function () use ($e) {
-                echo sprintf('<div class="error">
+                echo wp_kses(
+                    sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()),
+                    EscapeAllowedTags::allow_tags(["div", "p"])
+                );
             });
 
             return false;
