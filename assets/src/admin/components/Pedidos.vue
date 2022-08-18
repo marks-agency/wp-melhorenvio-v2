@@ -130,7 +130,7 @@
             <span>Destinatário</span>
           </li>
           <li>
-            <span>Cotação</span>
+            <span></span>
           </li>
           <li>
             <span>Documentos</span>
