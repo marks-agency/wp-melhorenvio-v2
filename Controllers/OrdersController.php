@@ -11,6 +11,7 @@ use MelhorEnvio\Services\OrderService;
 use MelhorEnvio\Services\OrderQuotationService;
 use MelhorEnvio\Services\ListOrderService;
 use MelhorEnvio\Services\OrderInvoicesService;
+use MelhorEnvio\Services\TrackingService;
 
 class OrdersController {
 
