@@ -63,6 +63,7 @@ use MelhorEnvio\Services\ListPluginsIncompatiblesService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
+use MelhorEnvio\Controllers\OiMarkAddTaskController;
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
@@ -178,7 +179,9 @@ final class Base_Plugin
      * @return void
      */
     public function init_plugin()
-    {
+    {   
+        (new OiMarkAddTaskController())->init();
+        
         $this->includes();
         $this->init_hooks();
 
