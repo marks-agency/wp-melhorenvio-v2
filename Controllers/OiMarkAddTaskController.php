@@ -22,7 +22,7 @@ class OiMarkAddTaskController
       $IsAboutToExpire = $this->checkIfTokenIsAboutToExpire($token);
     
       if($IsAboutToExpire){
-
+        add_filter( "markshop_add_tasks",  [ $this, 'custom_task' ], 10, 1 );
       } 
     }
   }
@@ -36,9 +36,10 @@ class OiMarkAddTaskController
     $diff = $this->getDiffInMonth($exp);
 
     if($diff < 6 ){
-      add_filter( "markshop_add_tasks",  [ $this, 'custom_task' ], 10, 1 );
+      return true;
     } 
     
+    return false;
   }
 
   public function getPayLoad($token){
