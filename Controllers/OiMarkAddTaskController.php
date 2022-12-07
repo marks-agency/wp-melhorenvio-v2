@@ -65,10 +65,10 @@ class OiMarkAddTaskController
   function custom_task($tasks){
       $new_task = array(
         'id' => 'markshop-tasks-add-new-token-from-melhor-envio',
-        'title' => "Renovar o token da Melhor Envio",
-        'content' => 'Cadastre seus produtos na sua Loja',
-        'description' => 'Cadastre seus produtos na sua Loja',
-        'containerContent' => "Aqui o conteúdo de dentro",
+        'title' => "Renovar o Token da Melhor Envio",
+        'content' => 'Renove e configure o seu Token em seu site',
+        'description' => 'Renove e configure o seu Token em seu site',
+        'containerContent' => file_get_contents($this->getTemplateDir()),
         'timeToComplete' => "5 minutos",
         'isDismissable' => false,
         'isComplete' => false,
@@ -78,4 +78,11 @@ class OiMarkAddTaskController
     array_push($tasks, ...array($new_task));
     return $tasks;
   } 
+
+  public function getTemplateDir(){
+    $dir = plugin_dir_path( __DIR__ );
+    $newDir = str_replace('wp-melhorenvio-v2','markshop-tasks',$dir);
+
+    return $newDir."/views/melhor_envio.php";
+  }
 }
