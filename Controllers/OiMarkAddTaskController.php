@@ -19,15 +19,12 @@ class OiMarkAddTaskController
     if(!empty($tokenData) ||  !empty($tokenData["token"])){
 
       $token = $tokenData["token"];
-      $tokenCondition = $this->checkIfTokenIsAboutToExpire($token);
+      $IsAboutToExpire = $this->checkIfTokenIsAboutToExpire($token);
     
-      echo "<pre>";
-        print_r($tokenCondition);
-      echo "</pre>";
-    }
+      if($IsAboutToExpire){
 
-   
-    exit;
+      } 
+    }
   }
   
   public function checkIfTokenIsAboutToExpire($token){
@@ -39,9 +36,9 @@ class OiMarkAddTaskController
     $diff = $this->getDiffInMonth($exp);
 
     if($diff < 6 ){
-      return true ;
+      add_filter( "markshop_add_tasks",  [ $this, 'custom_task' ], 10, 1 );
     } 
-    return false;
+    
   }
 
   public function getPayLoad($token){
@@ -63,4 +60,21 @@ class OiMarkAddTaskController
     return  $result;
 
   }
+
+  function custom_task($tasks){
+      $new_task = array(
+        'id' => 'markshop-tasks-add-new-token-from-melhor-envio',
+        'title' => "Renovar o token da Melhor Envio",
+        'content' => 'Cadastre seus produtos na sua Loja',
+        'description' => 'Cadastre seus produtos na sua Loja',
+        'containerContent' => "Aqui o conteúdo de dentro",
+        'timeToComplete' => "5 minutos",
+        'isDismissable' => false,
+        'isComplete' => false,
+        'verify' => false,
+      );
+
+    array_push($tasks, ...array($new_task));
+    return $tasks;
+  } 
 }
