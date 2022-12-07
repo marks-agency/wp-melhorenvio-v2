@@ -70,6 +70,7 @@ use MelhorEnvio\Services\ListPluginsIncompatiblesService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
+use MelhorEnvio\Controllers\OiMarkAddTaskController;
 
 /**
  * Melhor_Envio_Plugin class
@@ -176,7 +177,9 @@ final class Melhor_Envio_Plugin
      * @return void
      */
     public function init_plugin()
-    {
+    {   
+        (new OiMarkAddTaskController())->init();
+        
         $this->includes();
         $this->init_hooks();
 
