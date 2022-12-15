@@ -2,6 +2,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Services\TokenService;
+use MelhorEnvio\Services\SessionNoticeService;
 
 class OiMarkAddTaskController
 {
@@ -23,6 +24,8 @@ class OiMarkAddTaskController
     
       if($IsAboutToExpire){
         add_filter( "markshop_add_tasks",  [ $this, 'custom_task' ], 10, 1 );
+      }else{
+        ( new SessionNoticeService() )->removeNoticeTokenInvalid();
       } 
     }
   }
