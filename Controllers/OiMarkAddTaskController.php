@@ -54,13 +54,11 @@ class OiMarkAddTaskController
 
   public function getDiffInMonth($exp){
 
-    $d1 = new \DateTime(date('Y-m-d', $exp));
-    $d2 = new \DateTime(date('Y-m-d', time()));
-
-    $interval = $d2->diff($d1);
-    $result =  $interval->format('%m');
-    $result = intval( $result );
-
+    // Declare two dates
+    $start_date = strtotime(date('Y-m-d', time()));
+    $end_date = strtotime(date('Y-m-d', $exp));
+    $interval_in_days = (($end_date - $start_date)/60/60/24);
+    $result = ceil($interval_in_days/30);
     return  $result;
 
   }
