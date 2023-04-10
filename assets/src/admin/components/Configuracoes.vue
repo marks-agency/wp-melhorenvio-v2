@@ -547,7 +547,7 @@ display:none;
       <hr />
     </div>
 
-    <div class="wpme_config remove-element">
+    <div class="wpme_config">
       <h2>Calculadora</h2>
       <p>
         Ao habilitar essa opção, será exibida a calculadora de fretes com
