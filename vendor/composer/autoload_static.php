@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22
+class ComposerStaticInitfd4a5815bad2b1b7d837f3990e038480
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -18,27 +18,15 @@ class ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarDumper\\' => 28,
-            'Services\\' => 9,
         ),
         'M' => 
         array (
-            'Models\\' => 7,
-        ),
-        'I' => 
-        array (
-            'Interfaces\\' => 11,
-        ),
-        'H' => 
-        array (
-            'Helpers\\' => 8,
-        ),
-        'C' => 
-        array (
-            'Controllers\\' => 12,
-        ),
-        'B' => 
-        array (
-            'Bases\\' => 6,
+            'MelhorEnvio\\Services\\' => 21,
+            'MelhorEnvio\\Models\\' => 19,
+            'MelhorEnvio\\Interfaces\\' => 23,
+            'MelhorEnvio\\Helpers\\' => 20,
+            'MelhorEnvio\\Controllers\\' => 24,
+            'MelhorEnvio\\Bases\\' => 18,
         ),
     );
 
@@ -55,27 +43,27 @@ class ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
-        'Services\\' => 
+        'MelhorEnvio\\Services\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Services',
         ),
-        'Models\\' => 
+        'MelhorEnvio\\Models\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Models',
         ),
-        'Interfaces\\' => 
+        'MelhorEnvio\\Interfaces\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core/interfaces',
         ),
-        'Helpers\\' => 
+        'MelhorEnvio\\Helpers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Helpers',
         ),
-        'Controllers\\' => 
+        'MelhorEnvio\\Controllers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Controllers',
         ),
-        'Bases\\' => 
+        'MelhorEnvio\\Bases\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core/bases',
         ),
@@ -83,6 +71,7 @@ class ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
@@ -91,9 +80,9 @@ class ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit358d1ccd365a004e53a50c1bf3ba1b22::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfd4a5815bad2b1b7d837f3990e038480::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfd4a5815bad2b1b7d837f3990e038480::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitfd4a5815bad2b1b7d837f3990e038480::$classMap;
 
         }, null, ClassLoader::class);
     }
