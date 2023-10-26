@@ -3,7 +3,7 @@
         'name' => 'melhorenvio/melhorenvio-cotation',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '008c6a4337a14cf5169df95faeda3c77bb08f8eb',
+        'reference' => 'a5082f1a414ed93102c0e406161cef13f951a44c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'melhorenvio/melhorenvio-cotation' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '008c6a4337a14cf5169df95faeda3c77bb08f8eb',
+            'reference' => 'a5082f1a414ed93102c0e406161cef13f951a44c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
