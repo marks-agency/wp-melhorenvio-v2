@@ -9,7 +9,7 @@ class OiMarkAddTaskController
 
   public function init(){
     
-    add_action( 'admin_init', [ $this, 'getTokenEXP' ]);
+    add_action( 'init', [ $this, 'getTokenEXP' ]);
 
   }
 
