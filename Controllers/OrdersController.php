@@ -11,6 +11,7 @@ use MelhorEnvio\Services\OrderService;
 use MelhorEnvio\Services\OrderQuotationService;
 use MelhorEnvio\Services\ListOrderService;
 use MelhorEnvio\Services\OrderInvoicesService;
+use MelhorEnvio\Services\TrackingService;
 
 class OrdersController {
 
@@ -205,6 +206,9 @@ class OrdersController {
 
 		$labelResult = ( new OrderService() )->createLabel( $postId );
 
+		$oi_mark_rastreio_cod_melhor_envio = (new TrackingService())->getTrackingOrder($postId);
+		do_action('oi_mark_melhor_envio_send_email_by', $postId,$oi_mark_rastreio_cod_melhor_envio);
+		
 		return wp_send_json(
 			array(
 				'success' => true,
